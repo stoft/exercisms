@@ -6,11 +6,15 @@ defmodule Words do
   """
   @spec count(String.t) :: map() 
   def count(sentence) do
-  	sentence |> parse_sentence |> add_to_map %{}
+  	sentence
+    |> parse_sentence
+    |> add_to_map %{}
   end
 
   defp parse_sentence(sentence) do
-  	sentence |> String.downcase |> String.split ~r/[ ,!&@$%^_:]/, trim: true
+  	sentence
+    |> String.downcase
+    |> String.split ~r/[ ,!&@$%^_:]/, trim: true
   end
 
   defp add_to_map([], map), do: map
