@@ -28,8 +28,7 @@ defmodule DNA do
   """
   @spec nucleotide_counts([char]) :: Dict.t
   def nucleotide_counts(strand) do
-    m = Enum.reduce(@nucleotides, %{}, &(Map.put(&2, &1, 0)))
-    Enum.reduce(strand, m, fn(val, acc) ->
-      Map.update(acc, val, 1, &(&1 + 1)) end)
+    Enum.reduce(@nucleotides, %{}, fn(n, acc) -> 
+      Map.put(acc, n, count(strand, n)) end)
   end
 end
