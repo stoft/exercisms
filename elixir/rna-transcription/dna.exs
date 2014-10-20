@@ -11,7 +11,6 @@ defmodule DNA do
   	"""
   	@spec to_rna([char]) :: [char]
   	def to_rna(dna) do
-  		Enum.map(dna, fn(d) ->
-  			Dict.get(@nucleotides, d) end)
+  		Enum.map(dna, &(@nucleotides[&1]))
   	end
 end
