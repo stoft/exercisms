@@ -6,25 +6,16 @@ defmodule Words do
   """
   @spec count(String.t) :: map() 
   def count(sentence) do
-  	sentence
-    |> parse_sentence
-    |> add_to_map %{}
+  	sentence |> String.downcase |> split |> map
   end
 
-  defp parse_sentence(sentence) do
-  	sentence
-    |> String.downcase
-    |> String.split ~r/[ ,!&@$%^_:]/, trim: true
+  defp split(sentence) do
+    # everything but letters + digits + dash, unicode
+  	String.split(sentence, ~r/[^\pL\d-]/u, trim: true)
   end
 
-  defp add_to_map([], map), do: map
-  defp add_to_map([word|tail], map) do
-  	count = Dict.get(map, word)
-  	case count do
-  		nil ->
-  			add_to_map(tail, Dict.put(map, word, 1))
-  		_ ->
-  			add_to_map(tail, Dict.put(map, word, count + 1))
-  	end
+  defp map(list) do
+    Enum.reduce(list, %{}, 
+      &Map.update(&2, &1, 1, fn(i) -> i + 1 end))
   end
 end
