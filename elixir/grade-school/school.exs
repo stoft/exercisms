@@ -19,7 +19,6 @@ defmodule School do
 	@spec grade(Dict.t, pos_integer) :: [String]
 	def grade(db, grade) do
 		Dict.get(db, grade, [])
-		|> Enum.sort
 	end
 
 	@doc """
