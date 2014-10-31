@@ -10,7 +10,7 @@ defmodule Year do
   """
   @spec leap_year?(non_neg_integer) :: boolean
   def leap_year?(year) do
-    quadrennial?(year) and (not centennial?(year) or quadricentennial?(year))
+    quadricentennial?(year) or (quadrennial?(year) and not centennial?(year))
   end
 
   defp quadricentennial?(year), do: rem(year, 400) == 0
