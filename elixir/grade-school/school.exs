@@ -18,12 +18,8 @@ defmodule School do
 	"""
 	@spec grade(Dict.t, pos_integer) :: [String]
 	def grade(db, grade) do
-		names = Dict.get(db, grade)
-		if (names != nil) do
-			Enum.sort(names)
-		else
-			[]
-		end
+		Dict.get(db, grade, [])
+		|> Enum.sort
 	end
 
 	@doc """
@@ -31,6 +27,8 @@ defmodule School do
 	"""
 	@spec sort(Dict) :: Dict.t
 	def sort(db) do
-		Enum.sort(db, fn({k,v},{k2,v2}) -> k <= k2 end )
+		Enum.sort(db)
+		|> Enum.reduce(%{}, fn({k,v}, acc) ->
+			Dict.put_new(acc, k, Enum.sort(v)) end)
 	end
 end
