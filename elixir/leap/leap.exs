@@ -9,9 +9,10 @@ defmodule Year do
       except every year that is evenly divisible by 400.
   """
   @spec leap_year?(non_neg_integer) :: boolean
-  def leap_year?(year) when rem(year, 400) == 0, do: true
-  def leap_year?(year) when rem(year, 100) == 0, do: false
-  def leap_year?(year) when rem(year, 4) == 0, do: true
-  def leap_year?(year), do: false
+  def leap_year?(year) do
+    [{400, true}, {100, false}, {4, true}, {1, false}]
+    |> Enum.find(fn({n, _b}) -> rem(year, n) == 0 end)
+    |> elem 1
+  end
 
 end
