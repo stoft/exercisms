@@ -10,9 +10,13 @@ defmodule Year do
   """
   @spec leap_year?(non_neg_integer) :: boolean
   def leap_year?(year) do
-    [{400, true}, {100, false}, {4, true}, {1, false}]
-    |> Enum.find(fn({n, _b}) -> rem(year, n) == 0 end)
-    |> elem 1
+    quadrennial?(year) and (not centennial?(year) or quadricentennial?(year))
   end
 
+  defp quadricentennial?(year), do: rem(year, 400) == 0
+  
+  defp centennial?(year), do: rem(year, 100) == 0
+
+  defp quadrennial?(year), do: rem(year, 4) == 0
+    
 end
