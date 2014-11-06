@@ -1,4 +1,7 @@
 defmodule Words do
+  # everything but letters + digits + dash, unicode
+  @word_boundaries ~r/[^\pL\d-]/u
+
   @doc """
   Count the number of words in the sentence.
 
@@ -6,16 +9,19 @@ defmodule Words do
   """
   @spec count(String.t) :: map() 
   def count(sentence) do
-  	sentence |> String.downcase |> split |> map
+  	sentence |> normalize |> split |> count_items
+  end
+
+  defp normalize(string) do
+    string |> String.downcase
   end
 
   defp split(sentence) do
-    # everything but letters + digits + dash, unicode
-  	String.split(sentence, ~r/[^\pL\d-]/u, trim: true)
+  	String.split(sentence, @word_boundaries, trim: true)
   end
 
-  defp map(list) do
-    Enum.reduce(list, %{}, 
-      &Map.update(&2, &1, 1, fn(i) -> i + 1 end))
+  defp count_items(list) do
+    Enum.reduce(list, %{}, fn(e, acc) ->
+      Map.update(acc, e, 1, &(&1 + 1)) end)
   end
 end
