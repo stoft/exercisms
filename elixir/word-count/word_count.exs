@@ -1,5 +1,5 @@
 defmodule Words do
-  # everything but letters + digits + dash, unicode
+  # unicode, everything but letters + digits + dash
   @word_boundaries ~r/[^\pL\d-]/u
 
   @doc """
@@ -21,7 +21,8 @@ defmodule Words do
   end
 
   defp count_items(list) do
-    Enum.reduce(list, %{}, fn(e, acc) ->
-      Map.update(acc, e, 1, &(&1 + 1)) end)
+    Enum.reduce(list, %{}, fn(item, map) ->
+      Map.update(map, item, 1, &(&1 + 1))
+    end)
   end
 end
