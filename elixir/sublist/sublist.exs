@@ -12,15 +12,14 @@ defmodule Sublist do
     end
   end
   
-  def equals?(a, b), do: a === b
+  defp equals?(a, b), do: a === b
 
-  def contains?([], _), do: false
-  def contains?(a, b) when length(a) < length(b), do: false
-  def contains?(a, b) do
+  defp contains?(a, b) when length(a) < length(b), do: false
+  defp contains?(a, b) do
     list = Enum.take(a, length(b))
-    cond do
-      equals?(list, b) -> true
-      true -> contains?(tl(a), b)
+    case equals?(list, b) do
+      false -> contains?(tl(a), b)
+      _ -> true
     end
   end
 end
