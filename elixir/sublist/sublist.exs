@@ -16,7 +16,7 @@ defmodule Sublist do
 
   defp contains?(a, b) when length(a) < length(b), do: false
   defp contains?(a, b) do
-    list = Enum.take(a, length(b))
-    equals?(list, b) or contains?(tl(a), b)
+    sublist_of_a = Enum.take(a, length(b))
+    equals?(sublist_of_a, b) or contains?(tl(a), b)
   end
 end
