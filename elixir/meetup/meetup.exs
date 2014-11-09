@@ -33,21 +33,24 @@ defmodule Meetup do
   """
   @spec meetup(pos_integer, pos_integer, weekday, schedule) :: :calendar.date
   def meetup(year, month, weekday, schedule) do
-    day_range = get_day_range(year, month, schedule)
-    day = get_day(year, month, @days[weekday],
-      day_range, @week_index[schedule])
+    day = generate_days_in_month(year, month, schedule)
+    |> select_all_weekday_in_month(year, month, @days[weekday])
+    |> select_specific_week(@week_index[schedule])
     {year, month, day}
   end
 
-  defp get_day_range(_year, _month, :teenth), do: 13..19 #edge case
-  defp get_day_range(year, month, _schedule) do
+  defp generate_days_in_month(_year, _month, :teenth), do: 13..19 #edge case
+  defp generate_days_in_month(year, month, _schedule) do
     1 .. :calendar.last_day_of_the_month(year, month)
   end
 
-  defp get_day(year, month, weekday, day_range, week_index) do
+  defp select_all_weekday_in_month(day_range, year, month, weekday) do
     Enum.filter(day_range, fn(x) ->
-      :calendar.day_of_the_week(year, month, x) == weekday end)
-    |> Enum.at(week_index)
+      :calendar.day_of_the_week(year, month, x) == weekday end)    
+  end
+
+  defp select_specific_week(list_of_weeks, week_index) do
+    Enum.at(list_of_weeks, week_index)
   end
 
 end
