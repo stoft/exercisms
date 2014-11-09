@@ -5,10 +5,10 @@ defmodule Sublist do
   """
   def compare(a, b) do
     cond do
-      equals?(a, b) -> :equal
+      equals?(a, b)   -> :equal
       contains?(b, a) -> :sublist
       contains?(a, b) -> :superlist
-      true -> :unequal
+      true            -> :unequal
     end
   end
   
@@ -17,9 +17,6 @@ defmodule Sublist do
   defp contains?(a, b) when length(a) < length(b), do: false
   defp contains?(a, b) do
     list = Enum.take(a, length(b))
-    case equals?(list, b) do
-      false -> contains?(tl(a), b)
-      _ -> true
-    end
+    equals?(list, b) or contains?(tl(a), b)
   end
 end
