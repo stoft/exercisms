@@ -35,7 +35,7 @@ defmodule Meetup do
   def meetup(year, month, weekday, schedule) do
     day = generate_days_in_month(year, month, schedule)
     |> select_all_weekday_in_month(year, month, @days[weekday])
-    |> select_specific_week(@week_index[schedule])
+    |> select_weekday_from_specific_week(@week_index[schedule])
     {year, month, day}
   end
 
@@ -49,8 +49,8 @@ defmodule Meetup do
       :calendar.day_of_the_week(year, month, x) == weekday end)    
   end
 
-  defp select_specific_week(list_of_weeks, week_index) do
-    Enum.at(list_of_weeks, week_index)
+  defp select_weekday_from_specific_week(list_of_weekday, week_index) do
+    Enum.at(list_of_wkday, week_index)
   end
 
 end
