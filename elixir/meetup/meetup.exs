@@ -50,7 +50,7 @@ defmodule Meetup do
   end
 
   defp select_weekday_from_specific_week(list_of_weekday, week_index) do
-    Enum.at(list_of_wkday, week_index)
+    Enum.at(list_of_weekday, week_index)
   end
 
 end
