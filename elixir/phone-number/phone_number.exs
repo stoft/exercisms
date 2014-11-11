@@ -1,13 +1,13 @@
 defmodule Phone do
   @standard_num_length 10
   
-  @invalid_num List.to_string(for _ <-
-    1..@standard_num_length, do: "0")
+  @invalid_num "0000000000"
 
   @us_ca_country_code "1"
 
   @area_code_length 3
   @exchange_length 3
+  @subscriber_length 4
   
   @clean_re ~r/[\D]/
 
@@ -38,21 +38,19 @@ defmodule Phone do
   end
 
   defp validate(str) do
-    String.codepoints(str)
+    str
     |> valid_length_and_cc?
-    |> case do
-      true -> String.split_at(str, -@standard_num_length)
-        |> elem 1
-      false -> @invalid_num
+    |> if do
+      str |> String.split_at(-@standard_num_length) |> elem 1
+    else
+      @invalid_num
     end
   end
 
-  defp valid_length_and_cc?(phone_number) when
-    length(phone_number) == @standard_num_length, do: true
-
-  defp valid_length_and_cc?([country_code | phone_number]) when
-    length(phone_number) == @standard_num_length
-      and country_code == @us_ca_country_code, do: true
+  defp valid_length_and_cc?(<<_::binary-@standard_num_length>>), do: true
+  defp valid_length_and_cc?(<<@us_ca_country_code,
+    _::binary-@standard_num_length>>),
+  do: true
 
   defp valid_length_and_cc?(_), do: false
 
@@ -78,9 +76,10 @@ defmodule Phone do
     raw |> number |> parse_number |> elem 0
   end
 
-  defp parse_number(phone_number) do
-    { area_code, rest } = String.split_at(phone_number, @area_code_length)
-    { exchange, subscriber } = String.split_at(rest, @exchange_length)
+  defp parse_number(<<area_code::binary-@area_code_length,
+    exchange::binary-@exchange_length,
+    subscriber::binary-@subscriber_length>>)
+  do
     { area_code, exchange, subscriber}
   end
 
