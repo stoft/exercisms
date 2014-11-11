@@ -1,6 +1,15 @@
 defmodule Phone do
-  @invalid_num List.to_string(for _ <- 1..10, do: "0")
-  @clean_re ~r/[^0-9]/
+  @standard_num_length 10
+  
+  @invalid_num List.to_string(for _ <-
+    1..@standard_num_length, do: "0")
+
+  @us_ca_country_code "1"
+
+  @area_code_length 3
+  @exchange_length 3
+  
+  @clean_re ~r/[\D]/
 
   @doc """
   Remove formatting from a phone number.
@@ -21,23 +30,31 @@ defmodule Phone do
   """
   @spec number(String.t) :: String.t
   def number(raw) do
-    raw
-    |> String.replace(@clean_re, "")
-    |> validate
+    raw |> sanitize |> validate
+  end
+
+  defp sanitize(phone_number) do
+    String.replace(phone_number, @clean_re, "")
   end
 
   defp validate(str) do
-    import String
-    import Kernel, except: [length: 1]
-
-    cond do
-      length(str) == 11 and starts_with?(str, "1") ->
-        slice(str, 1..10)
-      length(str) != 10 ->
-        @invalid_num
-      true -> str
+    String.codepoints(str)
+    |> valid_length_and_cc?
+    |> case do
+      true -> String.split_at(str, -@standard_num_length)
+        |> elem 1
+      false -> @invalid_num
     end
   end
+
+  defp valid_length_and_cc?(phone_number) when
+    length(phone_number) == @standard_num_length, do: true
+
+  defp valid_length_and_cc?([country_code | phone_number]) when
+    length(phone_number) == @standard_num_length
+      and country_code == @us_ca_country_code, do: true
+
+  defp valid_length_and_cc?(_), do: false
 
   @doc """
   Extract the area code from a phone number
@@ -58,7 +75,13 @@ defmodule Phone do
   """
   @spec area_code(String.t) :: String.t
   def area_code(raw) do
-    raw |> number |> String.slice(0..2)
+    raw |> number |> parse_number |> elem 0
+  end
+
+  defp parse_number(phone_number) do
+    { area_code, rest } = String.split_at(phone_number, @area_code_length)
+    { exchange, subscriber } = String.split_at(rest, @exchange_length)
+    { area_code, exchange, subscriber}
   end
 
   @doc """
@@ -80,8 +103,7 @@ defmodule Phone do
   """
   @spec pretty(String.t) :: String.t
   def pretty(raw) do
-    major = String.slice(number(raw), 3..5)
-    minor = String.slice(number(raw), 6..10)
-    "(#{area_code(raw)}) #{major}-#{minor}"
+    { area_code, exchange, subscriber} = number(raw) |> parse_number
+    "(#{area_code}) #{exchange}-#{subscriber}"
   end
 end
