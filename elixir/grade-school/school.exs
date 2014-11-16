@@ -9,25 +9,24 @@ defmodule School do
 	Add a student to a particular grade in school.
 	"""
 	@spec add(Dict.t, string, pos_integer) :: Dict.t
-	def add(db, name, grade) do
-		Dict.update(db, grade, [name], &([name|&1]))
+	def add(school, name, grade) do
+		Dict.update(school, grade, [name], &([name|&1]))
 	end
 
 	@doc """
 	Return the names of the students in a particular grade.
 	"""
 	@spec grade(Dict.t, pos_integer) :: [String]
-	def grade(db, grade) do
-		Dict.get(db, grade, [])
+	def grade(school, grade) do
+		Dict.get(school, grade, [])
 	end
 
 	@doc """
 	Sorts the school by grade and name.
 	"""
 	@spec sort(Dict) :: Dict.t
-	def sort(db) do
-		Enum.sort(db)
-		|> Enum.reduce(%{}, fn({k,v}, acc) ->
-			Dict.put_new(acc, k, Enum.sort(v)) end)
+	def sort(school) do
+		Enum.reduce(school, %{}, fn({grade, names}, school) ->
+			Dict.put(school, grade, Enum.sort(names)) end)
 	end
 end
