@@ -8,8 +8,8 @@ defmodule Grains do
 
 	def square(1), do: 1
 	def square(number) do
-		Enum.reduce(1..number-1, 1, fn(_, acc) ->
-			acc * 2 end)
+		Enum.reduce(1..number-1, 1, fn(_, product) ->
+			product * 2 end)
 	end
 
 	@doc """
