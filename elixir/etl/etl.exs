@@ -9,16 +9,11 @@ defmodule ETL do
   """
   @spec transform(Dict.t) :: map() 
   def transform(input) do
-    input |> Dict.to_list |> convert
+    Enum.reduce input, Map.new, &invert/2
   end
 
-  defp convert(list) do
-    Enum.reduce(list, %{}, fn({k, v}, acc) ->
-      invert(v, acc, k) end)
-  end
-
-  defp invert(values, acc, key) do
-    Enum.reduce(values, acc, fn(val, acc) ->
-      Dict.put(acc, String.downcase(val), key) end )
+  defp invert({key, values}, map) do
+    Enum.reduce(values, map, fn(val, map) ->
+      Dict.put(map, String.downcase(val), key) end )
   end
 end
