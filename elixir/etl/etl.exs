@@ -13,7 +13,16 @@ defmodule ETL do
   end
 
   defp invert({key, values}, map) do
-    Enum.reduce(values, map, fn(val, map) ->
-      Dict.put(map, String.downcase(val), key) end )
+    Enum.reduce values, map, fn(value, map) ->
+      convert_value_to_key(map, value, key)
+    end
+  end
+
+  defp convert_value_to_key(map, value, old_key) do
+    Dict.put map, normalize(value), old_key
+  end
+
+  defp normalize(text) do
+    text |> String.downcase
   end
 end
