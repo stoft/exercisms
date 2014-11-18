@@ -1,11 +1,10 @@
 defmodule Year do
 
-  @ordered_rules [
-    {400, true},
-    {100, false},
-    {4, true},
-    {1, false}
-  ]
+  defmacro divisible_by?(arg1, arg2) do
+    quote do
+      rem(unquote(arg1), unquote(arg2)) == 0
+    end
+  end
 
   @doc """
   Returns whether 'year' is a leap year.
@@ -17,19 +16,9 @@ defmodule Year do
       except every year that is evenly divisible by 400.
   """
   @spec leap_year?(non_neg_integer) :: boolean
-  def leap_year?(year) do
-    year
-      |> find_matching_rule( @ordered_rules, &divisible_by?/2 )
-      |> extract_rule_outcome
-  end
+  def leap_year?(year) when divisible_by?(year, 400), do: true
+  def leap_year?(year) when divisible_by?(year, 100), do: false
+  def leap_year?(year) when divisible_by?(year, 4), do: true
+  def leap_year?(year), do: false
 
-  defp divisible_by?(num1, num2), do: rem(num1, num2) == 0
-
-  defp extract_rule_outcome({_rule_value, outcome}), do: outcome
-
-  defp find_matching_rule(number, rules, match_function) do
-    Enum.find rules, fn({rule_value, _outcome}) ->
-      match_function.(number, rule_value)
-    end
-  end
 end
