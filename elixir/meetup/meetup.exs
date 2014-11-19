@@ -4,26 +4,31 @@ defmodule Meetup do
   """
   
   @type weekday ::
-      :monday | :tuesday | :wednesday
+    :monday | :tuesday | :wednesday
     | :thursday | :friday | :saturday | :sunday
 
-  @type schedule :: :first | :second | :third 
-                  | :fourth | :last | :teenth
+  @type schedule ::
+    :first | :second | :third 
+    | :fourth | :last | :teenth
 
-  @days %{:monday     => 1,
-          :tuesday    => 2,
-          :wednesday  => 3,
-          :thursday   => 4,
-          :friday     => 5,
-          :saturday   => 6,
-          :sunday     => 7}
+  @day_numbers %{
+    :monday     => 1,
+    :tuesday    => 2,
+    :wednesday  => 3,
+    :thursday   => 4,
+    :friday     => 5,
+    :saturday   => 6,
+    :sunday     => 7
+  }
 
-  @week_index %{ :teenth => 0, # edge case
-                 :first  => 0,
-                 :second => 1,
-                 :third  => 2,
-                 :fourth => 3,
-                 :last   => -1}
+  @schedule_index %{
+    :first      => 0,
+    :second     => 1,
+    :third      => 2,
+    :fourth     => 3,
+    :last       => -1,
+    :teenth     => 0
+  }
 
   @doc """
   Calculate a meetup date.
@@ -33,24 +38,25 @@ defmodule Meetup do
   """
   @spec meetup(pos_integer, pos_integer, weekday, schedule) :: :calendar.date
   def meetup(year, month, weekday, schedule) do
-    day = generate_days_in_month(year, month, schedule)
-    |> select_all_weekday_in_month(year, month, @days[weekday])
-    |> select_weekday_from_specific_week(@week_index[schedule])
+    day = day_num_range(year, month, schedule)
+      |> all_weekday_in_range(year, month, @day_numbers[weekday])
+      |> schedule_weekday(@schedule_index[schedule])
     {year, month, day}
   end
 
-  defp generate_days_in_month(_year, _month, :teenth), do: 13..19 #edge case
-  defp generate_days_in_month(year, month, _schedule) do
+  defp day_num_range(_y, _m, :teenth), do: 13..19
+  defp day_num_range(year, month, _s) do
     1 .. :calendar.last_day_of_the_month(year, month)
   end
 
-  defp select_all_weekday_in_month(day_range, year, month, weekday) do
-    Enum.filter(day_range, fn(x) ->
-      :calendar.day_of_the_week(year, month, x) == weekday end)    
+  defp all_weekday_in_range(day_num_range, year, month, weekday_num) do
+    Enum.filter day_num_range, fn(day_num) ->
+      :calendar.day_of_the_week(year, month, day_num) == weekday_num
+    end
   end
 
-  defp select_weekday_from_specific_week(list_of_weekday, week_index) do
-    Enum.at(list_of_weekday, week_index)
+  defp schedule_weekday(list_of_weekday, schedule_index) do
+    Enum.at(list_of_weekday, schedule_index)
   end
 
 end
