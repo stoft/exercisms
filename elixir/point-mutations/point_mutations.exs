@@ -9,11 +9,12 @@ defmodule DNA do
 	"""
 	@spec hamming_distance([char], [char]) :: non_neg_integer
 	def hamming_distance(strand1, strand2) do
-		match(strand1, strand2, 0)
+		if length(strand1) == length(strand2) do
+			match(strand1, strand2, 0)
+		end
 	end
 
-	defp match(l1,l2,_) when length(l1) != length(l2), do: nil 
 	defp match([],[], acc), do: acc
-	defp match([h1|t1],[h1|t2], acc), do: match(t1, t2, acc)
-	defp match([h1|t1],[h2|t2], acc), do: match(t1, t2, acc + 1)
+	defp match([head|tail1],[head|tail2], acc), do: match(tail1, tail2, acc)
+	defp match([_|tail1],[_|tail2], acc), do: match(tail1, tail2, acc + 1)
 end
