@@ -11,6 +11,8 @@ defmodule DNA do
 	def hamming_distance(strand1, strand2) do
 		if length(strand1) == length(strand2) do
 			match(strand1, strand2, 0)
+		else
+				nil
 		end
 	end
 
